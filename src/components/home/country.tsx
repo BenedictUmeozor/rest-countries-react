@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Skeleton } from '../ui/skeleton';
 import { memo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import ImageLoader from '../shared/image';
 
 export const CountrySkeleton = () => {
   return (
@@ -39,7 +40,7 @@ const Country = memo(({ country }: { country: CountryInterface }) => {
       queryKey: ['country', country.name.common],
       queryFn: async (): Promise<CountryInterface[]> => {
         const res = await fetch(
-          `https://restcountries.com/v3.1/name/${country}?fullText=true`,
+          `https://restcountries.com/v3.1/name/${country.name.common}?fullText=true`,
         );
         return res.json();
       },
@@ -51,7 +52,7 @@ const Country = memo(({ country }: { country: CountryInterface }) => {
       onMouseOver={prefetch}
       className="rounded-md transition-transform duration-200 ease-linear hover:scale-105 max-sm:mx-auto max-sm:w-3/4"
     >
-      <img
+      <ImageLoader
         src={country.flags.svg}
         alt={country.name.common}
         className="aspect-[6.5/4] w-full max-w-full object-cover"

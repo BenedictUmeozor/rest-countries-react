@@ -30,7 +30,7 @@ const BorderCountries = ({ borders }: { borders: string[] }) => {
                 queryKey: ['country', country.name.common],
                 queryFn: async (): Promise<Country[]> => {
                   const res = await fetch(
-                    `https://restcountries.com/v3.1/name/${country}?fullText=true`,
+                    `https://restcountries.com/v3.1/name/${country.name.common}?fullText=true`,
                   );
                   return res.json();
                 },

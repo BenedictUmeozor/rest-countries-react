@@ -1,10 +1,12 @@
-import Country, { CountrySkeleton } from '@/components/home/country';
+import { CountrySkeleton } from '@/components/home/country';
 import SearchInput from '@/components/home/search';
 import CustomSelect from '@/components/home/select';
 import Container from '@/components/shared/container';
 import { Country as CountryInterface } from '@/interfaces';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+
+const Country = lazy(() => import('@/components/home/country'));
 
 const Home = () => {
   const [region, setRegion] = useState<string | null>(null);
@@ -70,14 +72,16 @@ const Home = () => {
         )}
         {isPending && (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => (
+            {Array.from({ length: 12 }).map((_, index) => (
               <CountrySkeleton key={index} />
             ))}
           </div>
         )}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {countries?.map((country) => (
-            <Country key={country.name.common} country={country} />
+            <Suspense key={country.name.common} fallback={<CountrySkeleton />}>
+              <Country country={country} />
+            </Suspense>
           ))}
         </div>
       </Container>
