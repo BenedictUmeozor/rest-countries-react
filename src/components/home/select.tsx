@@ -1,7 +1,7 @@
-import { REGIONS } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
 import { memo, useEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { REGIONS } from '@/lib/constants';
 
 const CustomSelect = memo(
   ({
@@ -12,26 +12,39 @@ const CustomSelect = memo(
     setRegion: (value: string | null) => void;
   }) => {
     const [open, setOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const listRef = useRef<HTMLUListElement>(null);
 
-    const ref = useRef<HTMLDivElement>(null);
+    const toggleOpen = (e: React.MouseEvent) => {
+      if (
+        e.target === containerRef.current ||
+        containerRef.current?.contains(e.target as Node)
+      ) {
+        setOpen((prev) => !prev);
+      }
+    };
 
     const handleChange = (value: string) => {
       if (region === value) {
         setRegion(null);
-
-        return setOpen(false);
+      } else {
+        setRegion(value);
       }
-      setRegion(value);
-
       setOpen(false);
     };
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (ref.current && !ref.current.contains(event.target as Node)) {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(event.target as Node) &&
+          listRef.current &&
+          !listRef.current.contains(event.target as Node)
+        ) {
           setOpen(false);
         }
       };
+
       document.addEventListener('click', handleClickOutside, true);
       return () => {
         document.removeEventListener('click', handleClickOutside, true);
@@ -41,8 +54,9 @@ const CustomSelect = memo(
     return (
       <div className="relative h-12 w-56">
         <div
+          ref={containerRef}
           className="flex h-full cursor-pointer items-center justify-between rounded-md bg-neutral-white px-4 shadow dark:bg-neutral-dark-blue"
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={toggleOpen}
         >
           {region || 'Filter by Region'}
           <ChevronDown
@@ -50,16 +64,14 @@ const CustomSelect = memo(
             className={cn('transition-transform', { 'rotate-180': open })}
           />
         </div>
-        <div
-          ref={ref}
-          className={cn(
-            'absolute left-0 top-14 w-full rounded-md bg-neutral-white shadow dark:bg-neutral-dark-blue',
-            {
-              hidden: !open,
-            },
-          )}
-        >
-          <ul className="py-2">
+
+        {open && (
+          <ul
+            ref={listRef}
+            className={cn(
+              'absolute left-0 top-14 w-full rounded-md bg-neutral-white py-2 shadow dark:bg-neutral-dark-blue',
+            )}
+          >
             {REGIONS.map((value) => (
               <li
                 key={value}
@@ -73,9 +85,10 @@ const CustomSelect = memo(
               </li>
             ))}
           </ul>
-        </div>
+        )}
       </div>
     );
   },
 );
+
 export default CustomSelect;

@@ -1,12 +1,11 @@
-import { CountrySkeleton } from '@/components/home/country';
+import Country from '@/components/home/country';
+import CountrySkeleton from '@/components/home/country-skeleton';
 import SearchInput from '@/components/home/search';
 import CustomSelect from '@/components/home/select';
 import Container from '@/components/shared/container';
 import { Country as CountryInterface } from '@/interfaces';
 import { useQuery } from '@tanstack/react-query';
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
-
-const Country = lazy(() => import('@/components/home/country'));
+import { useCallback, useMemo, useState } from 'react';
 
 const Home = () => {
   const [region, setRegion] = useState<string | null>(null);
@@ -79,9 +78,7 @@ const Home = () => {
         )}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {countries?.map((country) => (
-            <Suspense key={country.name.common} fallback={<CountrySkeleton />}>
-              <Country country={country} />
-            </Suspense>
+            <Country key={country.name.common} country={country} />
           ))}
         </div>
       </Container>

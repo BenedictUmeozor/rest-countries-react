@@ -1,36 +1,7 @@
 import { Country as CountryInterface } from '@/interfaces';
 import { Link } from 'react-router-dom';
-import { Skeleton } from '../ui/skeleton';
 import { memo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import ImageLoader from '../shared/image';
-
-export const CountrySkeleton = () => {
-  return (
-    <div className="rounded-md max-sm:mx-auto max-sm:w-3/4">
-      <div className="aspect-[6.5/4]">
-        <Skeleton className="h-full w-full" />
-      </div>
-      <div className="space-y-4 bg-neutral-white p-4 dark:bg-neutral-dark-blue">
-        <Skeleton className="h-4 w-3/4" />
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-1/4" />
-            <Skeleton className="h-4 w-2/4" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-1/4" />
-            <Skeleton className="h-4 w-2/4" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-1/4" />
-            <Skeleton className="h-4 w-2/4" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Country = memo(({ country }: { country: CountryInterface }) => {
   const queryClient = useQueryClient();
@@ -44,6 +15,7 @@ const Country = memo(({ country }: { country: CountryInterface }) => {
         );
         return res.json();
       },
+      staleTime: Infinity,
     });
 
   return (
@@ -52,7 +24,7 @@ const Country = memo(({ country }: { country: CountryInterface }) => {
       onMouseOver={prefetch}
       className="rounded-md transition-transform duration-200 ease-linear hover:scale-105 max-sm:mx-auto max-sm:w-3/4"
     >
-      <ImageLoader
+      <img
         src={country.flags.svg}
         alt={country.name.common}
         className="aspect-[6.5/4] w-full max-w-full object-cover"
